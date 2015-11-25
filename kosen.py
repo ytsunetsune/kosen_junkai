@@ -2,7 +2,7 @@
 
 import math
 import csv
-import pandas
+from geopy.geocoders import GoogleV3
 
 
 def hubeny(p1, p2):
@@ -39,6 +39,17 @@ def read_address_list(filename):
     return address_list
 
 
+def make_loc_data(address_list):
+    geolocator = GoogleV3()
+    loc_list = map(lambda x: [x[0], geolocator.geocode(x[1])], address_list)
+    return loc_list
+
+
+def make_kosen_data(loc_list):
+    kosen_list = map(lambda x: kosen(x[0], x[1].longitude, x[1].latitude), loc_list)
+    return kosen_list
+
+
 def load_kosen_data(filename):
     reader = csv.reader(open(filename, 'r'))
     kosen_list = []
@@ -56,3 +67,19 @@ def make_distance_list(kosen_list):
         distance_list.extend(
             map(lambda x: [route_kosen.name, x.name, route_kosen.distance_to(x)], lst))
     return distance_list
+
+
+def save_distance_list(dlist, filename):
+    writer = csv.writer(open(filename, 'w'))
+    for row in dlist:
+        writer.writerow([row[0].encode('utf-8'), row[1].encode('utf-8'), row[2]])
+
+
+if __name__ == '__main__':
+    add_list = read_address_list("kosen_address.csv")
+    print "Getting Location Data..."
+    loc_list = make_loc_data(add_list)
+    kosen_list = make_kosen_data(loc_list)
+    dlist = make_distance_list(kosen_list)
+    save_distance_list(dlist, "dlist.csv")
+
