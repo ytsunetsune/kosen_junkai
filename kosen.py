@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import math
 import csv
+import pandas
 
 
 def hubeny(p1, p2):
@@ -26,6 +29,14 @@ class kosen:
         #print self.name, another_kosen.name
         #print self.point, another_kosen.point
         return hubeny(self.point, another_kosen.point)
+
+
+def read_address_list(filename):
+    reader = csv.reader(open(filename, 'r'))
+    address_list = []
+    for row in reader:
+        address_list.append(map(lambda x: x.decode('utf-8'), row))
+    return address_list
 
 
 def load_kosen_data(filename):
