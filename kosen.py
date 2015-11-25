@@ -1,4 +1,5 @@
 import math
+import csv
 
 
 def hubeny(p1, p2):
@@ -22,5 +23,25 @@ class kosen:
         self.point = [longitude, latitude]
 
     def distance_to(self, another_kosen):
+        #print self.name, another_kosen.name
+        #print self.point, another_kosen.point
         return hubeny(self.point, another_kosen.point)
 
+
+def load_kosen_data(filename):
+    reader = csv.reader(open(filename, 'r'))
+    kosen_list = []
+    for row in reader:
+        print row
+        kosen_list.append(kosen(row[0], float(row[1]), float(row[2])))
+    return kosen_list
+
+
+def make_distance_list(kosen_list):
+    lst = kosen_list[:]
+    distance_list = []
+    while(len(lst) > 1):
+        route_kosen = lst.pop()
+        distance_list.extend(
+            map(lambda x: [route_kosen.name, x.name, route_kosen.distance_to(x)], lst))
+    return distance_list
